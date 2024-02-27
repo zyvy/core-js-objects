@@ -17,8 +17,8 @@
  *    shallowCopy({a: 2, b: { a: [1, 2, 3]}}) => {a: 2, b: { a: [1, 2, 3]}}
  *    shallowCopy({}) => {}
  */
-function shallowCopy(/* obj */) {
-  throw new Error('Not implemented');
+function shallowCopy(obj) {
+  return { ...obj };
 }
 
 /**
@@ -32,9 +32,28 @@ function shallowCopy(/* obj */) {
  *    mergeObjects([{a: 1, b: 2}, {b: 3, c: 5}]) => {a: 1, b: 5, c: 5}
  *    mergeObjects([]) => {}
  */
-function mergeObjects(/* objects */) {
-  throw new Error('Not implemented');
+function mergeObjects(objects) {
+  const newObj = {};
+  for (let i = 0; i < objects.length; i += 1) {
+    const objKeys = Object.keys(objects[i]);
+    const objVal = Object.values(objects[i]);
+    for (let j = 0; j < objKeys.length; j += 1) {
+      // console.log(objKeys[j], objVal[j]);
+      if (Object.hasOwn(newObj, objKeys[j])) {
+        newObj[objKeys[j]] += objVal[j];
+      } else {
+        newObj[objKeys[j]] = objVal[j];
+      }
+    }
+  }
+  return newObj;
 }
+/* console.log(
+  mergeObjects([
+    { a: 1, b: 2 },
+    { b: 3, c: 5 },
+  ])
+); */
 
 /**
  * Removes a properties from an object.
@@ -49,8 +68,14 @@ function mergeObjects(/* objects */) {
  *    removeProperties({name: 'John', age: 30, city: 'New York'}, 'age') => {name: 'John', city: 'New York'}
  *
  */
-function removeProperties(/* obj, keys */) {
-  throw new Error('Not implemented');
+function removeProperties(obj, keys) {
+  const newObj = obj;
+  for (let i = 0; i < keys.length; i += 1) {
+    if (Object.hasOwn(obj, keys[i])) {
+      delete newObj[keys[i]];
+    }
+  }
+  return newObj;
 }
 
 /**
@@ -65,9 +90,22 @@ function removeProperties(/* obj, keys */) {
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 2}) => true
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 3}) => false
  */
-function compareObjects(/* obj1, obj2 */) {
-  throw new Error('Not implemented');
+function compareObjects(obj1, obj2) {
+  const first = [...Object.keys(obj1), ...Object.values(obj1)];
+  const second = [...Object.keys(obj2), ...Object.values(obj2)];
+  // console.log(first, second);
+  if (first.length !== second.length) {
+    return false;
+  }
+  for (let i = 0; i < first.length; i += 1) {
+    if (first[i] !== second[i]) {
+      return false;
+    }
+  }
+  return true;
 }
+
+// console.log(compareObjects({ a: 1, b: 2 }, { a: 1, b: 3 }));
 
 /**
  * Checks if the source object is empty.
@@ -80,8 +118,11 @@ function compareObjects(/* obj1, obj2 */) {
  *    isEmptyObject({}) => true
  *    isEmptyObject({a: 1}) => false
  */
-function isEmptyObject(/* obj */) {
-  throw new Error('Not implemented');
+function isEmptyObject(obj) {
+  if (Object.keys(obj).length <= 0) {
+    return true;
+  }
+  return false;
 }
 
 /**
