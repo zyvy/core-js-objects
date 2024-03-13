@@ -18,7 +18,9 @@
  *    shallowCopy({}) => {}
  */
 function shallowCopy(obj) {
-  return { ...obj };
+  const newObj = {};
+  return Object.assign(newObj, obj);
+  // return { ...obj };
 }
 
 /**
@@ -33,20 +35,12 @@ function shallowCopy(obj) {
  *    mergeObjects([]) => {}
  */
 function mergeObjects(objects) {
-  const newObj = {};
-  for (let i = 0; i < objects.length; i += 1) {
-    const objKeys = Object.keys(objects[i]);
-    const objVal = Object.values(objects[i]);
-    for (let j = 0; j < objKeys.length; j += 1) {
-      // console.log(objKeys[j], objVal[j]);
-      if (Object.hasOwn(newObj, objKeys[j])) {
-        newObj[objKeys[j]] += objVal[j];
-      } else {
-        newObj[objKeys[j]] = objVal[j];
-      }
-    }
-  }
-  return newObj;
+  return objects.reduce((acc, obj) => {
+    Object.entries(obj).forEach(([key, value]) => {
+      acc[key] = Object.hasOwn(acc, key) ? acc[key] + value : value;
+    });
+    return acc;
+  }, {});
 }
 /* console.log(
   mergeObjects([
@@ -324,9 +318,31 @@ function sortCitiesArray(arr) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const myMap = new Map();
+  array.forEach((obj) => {
+    const key = keySelector(obj);
+    const value = valueSelector(obj);
+    if (!myMap.has(key)) {
+      myMap.set(key, []);
+    }
+    myMap.get(key).push(value);
+  });
+  // console.log(myMap);
+  return myMap;
 }
+/* group(
+  [
+    { country: 'Belarus', city: 'Brest' },
+    { country: 'Russia', city: 'Omsk' },
+    { country: 'Russia', city: 'Samara' },
+    { country: 'Belarus', city: 'Grodno' },
+    { country: 'Belarus', city: 'Minsk' },
+    { country: 'Poland', city: 'Lodz' },
+  ],
+  (item) => item.country,
+  (item) => item.city
+); */
 
 /**
  * Css selectors builder
